@@ -4,18 +4,92 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Today's Operations</title>
+<meta name="theme-color" content="#ffffff">
 <style>
-body { font-family: monospace; max-width: 700px; margin: 20px auto; padding: 0 15px; }
-.current { font-weight: bold; background: #ffffcc; }
-.done { text-decoration: line-through; opacity: 0.5; }
-.past { opacity: 0.6; }
-h2 { border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-top: 30px; }
-.arrow { margin-right: 4px; }
-label { display: block; padding: 4px 0; cursor: pointer; }
-#clock { font-size: 1.2em; }
-.laws { background: #f5f5f5; padding: 10px; margin-bottom: 20px; }
-details { margin: 8px 0; }
-summary { cursor: pointer; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:monospace;max-width:720px;margin:0 auto;padding:10px 15px 80px}
+h1{font-size:1.3em;margin-bottom:2px}
+h2{border-bottom:1px solid #ccc;padding:4px 0;margin:24px 0 8px;font-size:1.05em}
+#clock{font-size:1.1em;font-weight:bold}
+#dayInfo{opacity:0.7;margin-bottom:4px}
+#phaseBar{padding:6px 8px;margin-bottom:10px;background:#f0f0f0;font-size:0.9em}
+
+/* Streaks */
+#streaks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.streak-box{flex:1 1 100px;padding:6px 8px;background:#f8f8f8;border:1px solid #ddd;font-size:0.85em;min-width:100px}
+.streak-box strong{display:block;font-size:1.3em}
+.streak-box .best{opacity:0.5;font-size:0.8em}
+
+/* Laws */
+.laws{background:#f5f5f5;padding:8px 10px;margin-bottom:12px;font-size:0.9em;line-height:1.6}
+
+/* Steps */
+.step{padding:5px 0;border-bottom:1px solid #f0f0f0}
+.step-row{display:flex;align-items:flex-start;gap:6px;cursor:pointer}
+.step-state{width:22px;height:22px;border:2px solid #999;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:0.85em;margin-top:1px;background:#fff}
+.step-state.done{border-color:#090;color:#090;background:#f0fff0}
+.step-state.skipped{border-color:#c00;color:#c00;background:#fff5f5}
+.step-label{flex:1;font-size:0.95em;line-height:1.4}
+.step-time{font-weight:bold;margin-right:4px}
+.step.is-current{background:#ffffcc;margin:0 -8px;padding:5px 8px}
+.step.is-current .step-label{font-weight:bold}
+.step.is-past .step-label{opacity:0.5}
+.step.is-done .step-label{text-decoration:line-through;opacity:0.4}
+.step.is-skipped .step-label{opacity:0.4}
+.step-detail{padding:4px 0 4px 28px;font-size:0.85em;opacity:0.7;line-height:1.5;display:none}
+.step.expanded .step-detail{display:block}
+.step-arrow{color:#c80;font-weight:bold;margin-right:2px}
+
+/* Notes */
+.step-note-btn{font-size:0.75em;opacity:0.4;cursor:pointer;margin-left:4px;vertical-align:top}
+.step-note-btn:hover{opacity:1}
+.step-note-btn.has-note{opacity:0.8;color:#06c}
+.step-note-area{display:none;margin:4px 0 4px 28px}
+.step-note-area.open{display:block}
+.step-note-area input{width:100%;font-family:monospace;font-size:0.85em;padding:3px 6px;border:1px solid #ccc}
+
+/* Posture timer */
+#postureTimer{position:fixed;bottom:0;left:0;right:0;background:#333;color:#fff;text-align:center;padding:8px;font-family:monospace;font-size:0.95em;display:none;z-index:100}
+#postureTimer.alert{background:#c00;animation:flash 0.5s infinite alternate}
+#postureTimer button{margin-left:10px;font-family:monospace;cursor:pointer;padding:2px 8px}
+@keyframes flash{from{background:#c00}to{background:#900}}
+
+/* History */
+#historySection{margin-top:24px}
+#historyGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-size:0.75em;text-align:center}
+.hist-day{padding:4px 2px;background:#f8f8f8;border:1px solid #eee;cursor:pointer;min-height:36px}
+.hist-day.today{border:2px solid #333}
+.hist-day .pct{font-weight:bold;font-size:1.1em}
+.hist-day .date{opacity:0.5}
+#historyDetail{margin-top:8px;padding:8px;background:#f5f5f5;display:none;font-size:0.85em}
+
+/* Sunday review */
+#sundayReview{display:none;margin-top:20px;padding:12px;background:#fafafa;border:1px solid #ddd}
+#sundayReview h2{margin-top:8px}
+#sundayReview .domain-score{font-size:1.1em;font-weight:bold;margin:4px 0}
+#sundayReview textarea{width:100%;height:80px;font-family:monospace;font-size:0.85em;margin-top:6px;padding:6px}
+.review-q{margin:6px 0;line-height:1.5}
+.review-data{font-weight:bold}
+
+/* Emergency */
+#emergencyBtn{position:fixed;bottom:50px;right:15px;background:#fff;border:2px solid #c00;color:#c00;padding:6px 12px;cursor:pointer;font-family:monospace;font-weight:bold;font-size:0.85em;z-index:99}
+#emergencyPanel{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);color:#fff;z-index:200;padding:30px 20px;overflow-y:auto;font-size:1em;line-height:1.8}
+#emergencyPanel h2{color:#fff;border-color:#666;margin-top:20px}
+#emergencyPanel .close{position:fixed;top:10px;right:15px;font-size:1.5em;cursor:pointer;color:#fff}
+
+/* Sync */
+#syncBar{font-size:0.8em;opacity:0.5;margin-bottom:8px}
+#syncSetup{padding:12px;background:#f5f5f5;margin-bottom:12px}
+#syncSetup input{font-family:monospace;padding:4px 8px;font-size:1em;width:200px}
+#syncSetup button{font-family:monospace;padding:4px 12px;cursor:pointer;margin-left:6px}
+
+/* Nav buttons */
+.nav-btns{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+.nav-btns button{font-family:monospace;padding:4px 10px;cursor:pointer;border:1px solid #ccc;background:#fff;font-size:0.85em}
+.nav-btns button.active{background:#333;color:#fff;border-color:#333}
+
+/* MVD */
+.mvd{margin-top:20px;padding:10px;background:#fff8f0;border:1px solid #eda;font-size:0.9em}
 </style>
 </head>
 <body>
@@ -23,8 +97,25 @@ summary { cursor: pointer; }
 <h1>TODAY'S OPS</h1>
 <div id="clock"></div>
 <div id="dayInfo"></div>
+<div id="phaseBar"></div>
 
-<div class="laws">
+<div id="syncBar"></div>
+<div id="syncSetup" style="display:none">
+  <strong>Sync setup:</strong> Enter a passphrase to sync across devices.<br>
+  <input type="text" id="syncPass" placeholder="your passphrase">
+  <button onclick="savePassphrase()">Save</button>
+  <button onclick="document.getElementById('syncSetup').style.display='none'">Skip</button>
+</div>
+
+<div id="streaks"></div>
+
+<div class="nav-btns">
+  <button onclick="showView('today')" id="btnToday" class="active">Today</button>
+  <button onclick="showView('history')" id="btnHistory">History (30d)</button>
+  <button onclick="showView('review')" id="btnReview">Weekly Review</button>
+</div>
+
+<div class="laws" id="lawsBox">
 <strong>THE LAWS</strong><br>
 1. Never lie down during the day<br>
 2. Phone away until after breakfast<br>
@@ -35,110 +126,578 @@ summary { cursor: pointer; }
 7. When lost: water &rarr; real food &rarr; walk
 </div>
 
-<div id="steps"></div>
+<div id="todayView">
+  <div id="steps"></div>
+  <div class="mvd">
+    <strong>IF EVERYTHING FALLS APART</strong><br>
+    Minimum viable day: 20-min walk outside + 10 min posture work. Do not let today become a zero day.
+  </div>
+</div>
+
+<div id="historyView" style="display:none">
+  <div id="historySection">
+    <h2>LAST 30 DAYS</h2>
+    <div id="historyGrid"></div>
+    <div id="historyDetail"></div>
+  </div>
+</div>
+
+<div id="reviewView" style="display:none">
+  <div id="sundayReview" style="display:block"></div>
+</div>
+
+<div id="postureTimer">
+  POSTURE CHECK in <span id="ptTime">30:00</span>
+  <button onclick="resetPostureTimer()">Reset</button>
+  <button onclick="pausePostureTimer()">Pause</button>
+</div>
+
+<button id="emergencyBtn" onclick="toggleEmergency()">Bad day?</button>
+
+<div id="emergencyPanel">
+  <span class="close" onclick="toggleEmergency()">&times;</span>
+  <h1>EMERGENCY PROTOCOLS</h1>
+
+  <h2>LOST / OVERWHELMED</h2>
+  1. Drink water right now<br>
+  2. Eat real food (eggs take 5 minutes)<br>
+  3. Go for a walk outside<br>
+  That is it. Do those three things. Everything else can wait.
+
+  <h2>ISOLATION SPIRAL</h2>
+  1. Text one friend right now. Anything. Even "what are you up to this weekend?"<br>
+  2. Go to your regular coffee spot. Order something. Sit for 30 minutes.<br>
+  3. If there is an event this week, commit to going. Tell someone so you are accountable.<br>
+  4. Remember: "Everyone is shy. Other people are waiting for you to introduce yourself."
+
+  <h2>MINIMUM VIABLE DAY</h2>
+  &bull; 20-minute walk outside<br>
+  &bull; 10 minutes of posture work<br>
+  That is it. This is not a zero day. You moved. You win.
+
+  <h2>THE LAWS</h2>
+  When you are lost: water &rarr; real food &rarr; walk.<br>
+  Momentum is your most valuable asset.<br>
+  Never lie down during the day.
+</div>
 
 <script>
+// ============================================
+// DATA: Steps with short/long labels + metadata
+// ============================================
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const LAUNCH_DATE = new Date(2026, 2, 12); // March 12, 2026
+
+// Streak categories mapped to step IDs
+const STREAK_CATS = {
+  sunlight: { label: 'Sunlight', steps: ['morning_sun','afternoon_sun'] },
+  posture: { label: 'Posture', steps: ['posture_routine'] },
+  cooking: { label: 'Home-cooked', steps: ['breakfast','lunch','dinner'] },
+  workout: { label: 'Workout', steps: ['workout'] },
+  social: { label: 'Social', steps: ['evening_walk','dating_check'] },
+  sleep: { label: 'Sleep <11:30', steps: ['lights_out'] }
+};
 
 function getSteps() {
   const d = new Date();
-  const day = d.getDay(); // 0=Sun
-  const dayName = DAYS[day];
-
+  const day = d.getDay();
   const steps = [];
 
-  // === MORNING ===
-  steps.push({ time: '07:00', text: 'Super Water — 500ml water + chia seeds + creatine', section: 'MORNING' });
-  steps.push({ time: '07:40', text: 'Super Coffee (black coffee/matcha + cacao) + Supplements (Omega-3, Mag, D+K2, Turmeric)' });
-  steps.push({ time: '07:50', text: 'Morning Sunlight — terrace, 15-20 min. Dead hang 30 sec. No phone.' });
-  steps.push({ time: '08:10', text: 'Posture Routine (12 min) — Hip Flexor Couch Stretch 90s/side, Chest Doorway Stretch 60s/side, Cat-Cow x10, Dead Bugs 3x10/side, Glute Bridges 3x15, Wall Slides 3x10' });
-  steps.push({ time: '08:30', text: 'Breakfast — oats + berries + yoghurt + eggs' });
+  function add(id, time, short, long, opts) {
+    steps.push({ id, time, short, long: long || '', section: (opts && opts.section) || null, streakCat: (opts && opts.streakCat) || null });
+  }
 
-  // === WORK ===
-  steps.push({ time: '09:00', text: 'Work starts. Set 30-min posture timer (ribs down, tailbone tucked, ears over shoulders).', section: 'WORK' });
+  // MORNING
+  add('super_water', '07:00', 'Super Water', '500ml water + chia seeds + creatine', { section: 'MORNING' });
+  add('super_coffee', '07:40', 'Super Coffee + Supplements', 'Black coffee/matcha + cacao. Take: Omega-3, Magnesium, D+K2, Turmeric+Black Pepper');
+  add('morning_sun', '07:50', 'Morning Sunlight', 'Terrace, 15-20 min. Dead hang 30 sec. Face sky, not directly at sun. No phone.', { streakCat: 'sunlight' });
+  add('posture_routine', '08:10', 'Posture Routine (12 min)', 'RELEASE (5 min): Hip Flexor Couch Stretch 90s/side, Chest Doorway Stretch 60s/side (high+low), Cat-Cow x10.\nACTIVATE (7 min): Dead Bugs 3x10/side (lower back pressed into floor), Glute Bridges 3x15 (2s hold at top), Wall Slides 3x10 (full back contact).', { streakCat: 'posture' });
+  add('breakfast', '08:30', 'Breakfast', 'Oats + berries + yoghurt + eggs. Half plate veg, quarter protein, quarter healthy fats.', { streakCat: 'cooking' });
 
-  // Day-specific career tasks
-  if (day === 1) steps.push({ time: '09:30', text: '[CAREER] 30 min portfolio work (case study writing/design)' });
-  if (day === 2) steps.push({ time: '09:30', text: '[CAREER] 15 min — send 1 outreach message (LinkedIn/email/WhatsApp)' });
-  if (day === 3) steps.push({ time: '09:30', text: '[CAREER] 30 min portfolio work (case study writing/design)' });
-  if (day === 4) steps.push({ time: '09:30', text: '[CAREER] 15 min outreach message + 15 min financial check-in (account balances, weekly spending)' });
-  if (day === 5) steps.push({ time: '09:30', text: '[CAREER] 30 min — review job boards, apply to 1-2 roles' });
+  // WORK
+  add('work_start', '09:00', 'Work starts — posture timer on', 'Set 30-min posture checks. Ribs down, tailbone tucked, ears over shoulders, no forward head.', { section: 'WORK' });
 
-  // === AFTERNOON ===
-  steps.push({ time: '12:30', text: 'Lunch — batch-cooked meal. Half plate veggies, quarter protein, quarter healthy fats.', section: 'AFTERNOON' });
-  steps.push({ time: '16:30', text: 'Afternoon Sunlight — terrace, 20-30 min. No scrolling. Walk around, breathe, look at the sky.' });
+  if (day === 1) add('career', '09:30', '[CAREER] Portfolio work (30 min)', 'Case study writing or design. Pricing Page case study or FTU flows.');
+  if (day === 2) add('career', '09:30', '[CAREER] Send 1 outreach message (15 min)', 'LinkedIn, email, or WhatsApp. Target: Google (Harish/Deepshi/Neha), Microsoft (Vinod), ElevenLabs (Ruta), or reconnect a dormant contact.');
+  if (day === 3) add('career', '09:30', '[CAREER] Portfolio work (30 min)', 'Case study writing or design. Pricing Page case study or FTU flows.');
+  if (day === 4) add('career', '09:30', '[CAREER] Outreach + Finance (30 min)', '15 min: send 1 outreach message. 15 min: financial check-in (account balances, this week\'s spending, on budget?).');
+  if (day === 5) add('career', '09:30', '[CAREER] Job boards (30 min)', 'Review LinkedIn, Wellfound, Dribbble, Designjobs.co. Apply to 1-2 quality roles.');
 
-  // === EVENING ===
-  // Workout varies by day
+  // AFTERNOON
+  add('lunch', '12:30', 'Lunch', 'Batch-cooked meal. Half plate veggies, quarter protein, quarter healthy fats. No Swiggy.', { section: 'AFTERNOON', streakCat: 'cooking' });
+  add('afternoon_sun', '16:30', 'Afternoon Sunlight', 'Terrace, 20-30 min. No scrolling. Walk around, breathe, look at the sky.', { streakCat: 'sunlight' });
+
+  // EVENING — workout varies by day
+  const workoutSection = { section: 'EVENING', streakCat: 'workout' };
   if (day === 1 || day === 3 || day === 5) {
-    steps.push({ time: '17:20', text: 'Resistance Training (45-60 min) — 10 min warmup (dead bugs, glute bridges, wall slides), then 4-5 compound movements, finish with 2 min kegels', section: 'EVENING' });
+    const option = getWorkoutOption(day);
+    add('workout', '17:20', 'Resistance Training (45-60 min)', '10 min warmup: dead bugs, glute bridges, wall slides.\n' + option + '\nFinish with 2 min kegels.', workoutSection);
   } else if (day === 2 || day === 4) {
-    steps.push({ time: '17:20', text: 'Zone 2 Cardio (brisk walk or cycle) + Yoga/Posture deep work (40 min) — warmup, cardio, finish with 2 min kegels', section: 'EVENING' });
+    add('workout', '17:20', 'Zone 2 Cardio + Yoga (40 min)', 'Brisk walk or cycle. Add yoga/posture deep work on Thu. 10 min warmup, finish with 2 min kegels.', workoutSection);
   } else if (day === 6) {
-    steps.push({ time: '17:20', text: 'Martial Arts class — Krav Maga / Boxing (60 min). Talk to people before and after class.', section: 'EVENING' });
+    add('workout', '17:20', 'Martial Arts (60 min)', 'Krav Maga / Boxing. Talk to people before and after class — easiest icebreaker.', workoutSection);
   } else {
-    steps.push({ time: '17:20', text: 'Active recovery — long walk, swimming, or mobility work (30-45 min)', section: 'EVENING' });
+    add('workout', '17:20', 'Active Recovery (30-45 min)', 'Long walk, swimming, or mobility work. Move, don\'t train.', workoutSection);
   }
 
-  // Myofascial release on Tue, Thu, Sun
+  // Myofascial release Tue/Thu/Sun
   if (day === 2 || day === 4 || day === 0) {
-    steps.push({ time: '18:30', text: 'Myofascial Release (15-20 min) — Foam roll thoracic spine 2 min, IT band & quads 2 min/side, Lacrosse ball glutes 90s/side, Upper trap 90s/side, Plantar fascia 60s/foot, Diaphragm breathing 2 min' });
+    add('myofascial', '18:30', 'Myofascial Release (15-20 min)', 'Foam roll thoracic spine 2 min. IT band & quads 2 min/side. Lacrosse ball glutes 90s/side. Upper trap 90s/side. Plantar fascia 60s/foot. Diaphragm breathing 2 min (4 in, 4 hold, 6 out).');
   }
 
-  steps.push({ time: '19:00', text: 'Dinner — protein + roasted veg. Kitchen closes at 7:30 PM.' });
+  add('dinner', '19:00', 'Dinner', 'Protein + roasted veg. Kitchen closes at 7:30 PM. Heaviest meal before cutoff.', { streakCat: 'cooking' });
 
   // Evening walk Mon-Fri
   if (day >= 1 && day <= 5) {
-    steps.push({ time: '19:30', text: 'Evening walk — talk to at least 1 person (shopkeeper, neighbour, anyone)' });
+    add('evening_walk', '19:30', 'Evening walk — talk to 1 person', 'Shopkeeper, neighbour, anyone. The streak metric: did you have a meaningful social interaction today?', { streakCat: 'social' });
   }
 
-  // Dating app check daily, Shaadi on Tue/Thu
+  // Dating
   if (day === 2 || day === 4) {
-    steps.push({ time: '20:00', text: 'Dating app check (10 min max) + Reply to Shaadi messages (15 min)' });
+    add('dating_check', '20:00', 'Dating apps (10 min) + Shaadi replies (15 min)', 'Swipe intentionally. When you match: move to real conversation in 3-4 messages. Suggest specific plan. Reply to all Shaadi introductions within 24h.', { streakCat: 'social' });
   } else {
-    steps.push({ time: '20:00', text: 'Dating app check (10 min max). Swipe intentionally.' });
+    add('dating_check', '20:00', 'Dating app check (10 min max)', 'Swipe intentionally. If you match: move to real conversation fast. Suggest coffee at a specific place on a specific day.', { streakCat: 'social' });
   }
 
-  // Coffee with someone Wed or Thu
   if (day === 3 || day === 4) {
-    steps.push({ time: '20:15', text: '[SOCIAL] Did you have coffee with someone today? If not, text someone now for tomorrow.' });
+    add('coffee_social', '20:15', '[SOCIAL] Coffee with someone?', 'Did you have coffee with someone today? If not, text someone now for tomorrow. Friend, colleague, match, anyone.');
   }
 
-  // === NIGHT ===
-  steps.push({ time: '21:00', text: 'Screens to warm/night mode. No work emails. No Slack. Soft light only.', section: 'NIGHT' });
+  // NIGHT
+  add('screens_warm', '21:00', 'Screens warm — no work after this', 'Phone on Night Shift. No new stressful info, no work emails, no Slack. Soft light only. Red/amber lamp if you have one.', { section: 'NIGHT' });
 
-  // Mon/Wed evening problem framing
   if (day === 1 || day === 3) {
-    steps.push({ time: '21:15', text: '[SKILL] Problem framing practice — write problem statements for current work tickets' });
+    add('skill_practice', '21:15', '[SKILL] Problem framing practice', 'Write problem statements for current work tickets. Who is this for? What\'s current behavior? Why now? What metrics move? What\'s the hypothesis?');
   }
 
-  steps.push({ time: '21:30', text: 'Optional wind-down — Chin tucks lying down 2x10 (hold 5s), 90-90 Hip Stretch 60s/side' });
-  steps.push({ time: '22:20', text: 'Reading time — strategy/design books' });
-  steps.push({ time: '23:00', text: 'Sleep protocol — foam earplugs in, blackout room, HEPA filter on, cool room, phone face down' });
-  steps.push({ time: '23:30', text: 'Lights out. 5 sleep cycles to 7 AM.' });
+  add('wind_down', '21:30', 'Wind-down stretches (optional)', 'Chin tucks lying down 2x10 (hold 5s). 90-90 Hip Stretch 60s/side. Hip flexor stretch if heavy sitting day.');
+  add('reading', '22:20', 'Reading time', 'Strategy/design books. "Good Strategy Bad Strategy" by Rumelt. Or published design case studies.');
+  add('sleep_protocol', '23:00', 'Sleep protocol', 'Foam earplugs in. Blackout room completely. HEPA filter on. Cool the room. Phone face down or in another room.');
+  add('lights_out', '23:30', 'Lights out', '5 full 90-min sleep cycles to 7 AM. If you can\'t sleep, you\'re probably too warm.', { streakCat: 'sleep' });
 
-  // === SATURDAY EXTRAS ===
+  // SATURDAY EXTRAS
   if (day === 6) {
-    steps.push({ time: '20:30', text: '[SOCIAL] Saturday night is for going out. No gaming. No bingeing. Be with people.', section: 'SATURDAY SOCIAL' });
+    add('sat_social', '20:30', '[SOCIAL] Saturday night = go out', 'No gaming. No bingeing. Be with people. If you don\'t have plans, go to your regular coffee spot or find an event on Insider.in/Meetup.com.', { section: 'SATURDAY SOCIAL' });
   }
 
-  // === SUNDAY EXTRAS ===
+  // SUNDAY EXTRAS
   if (day === 0) {
-    steps.push({ time: '10:00', text: '[WEEKLY REVIEW] Body — Did I cook at home most days? Posture work daily? Got sunlight? How is sleep?', section: 'SUNDAY REVIEW & PREP' });
-    steps.push({ time: '10:15', text: '[WEEKLY REVIEW] Social — How many new people did I meet? Date or event attended? Following up with contacts?' });
-    steps.push({ time: '10:30', text: '[WEEKLY REVIEW] Career — Portfolio progress? Outreach sent? Financial runway status?' });
-    steps.push({ time: '10:45', text: '[WEEKLY REVIEW] Meta — Which domain got neglected? One thing for biggest impact next week? Being too hard or too easy on yourself?' });
-    steps.push({ time: '11:00', text: '[MEAL PREP] Review fridge, make grocery list' });
-    steps.push({ time: '11:30', text: '[MEAL PREP] Grocery run' });
-    steps.push({ time: '13:00', text: '[MEAL PREP] Batch cook 2 meals for the week. Prep breakfast ingredients. Check supplement supply.' });
-    steps.push({ time: '15:00', text: 'Call someone you love.' });
-    steps.push({ time: '15:30', text: '[CAREER] 15 min — weekly review: what moved, what is stuck?' });
-    steps.push({ time: '16:00', text: '[SOCIAL] Review Apple Calendar for upcoming events. Pick 2 for next 2 weeks. Block the time.' });
+    add('review_body', '10:00', '[REVIEW] Body check', 'Did I cook at home most days? Posture work daily? Got sunlight? How\'s sleep?', { section: 'SUNDAY REVIEW & PREP' });
+    add('review_social', '10:15', '[REVIEW] Social check', 'How many new people met? Date or event attended? Following up with contacts?');
+    add('review_career', '10:30', '[REVIEW] Career check', 'Portfolio progress? Outreach sent? Financial runway status?');
+    add('review_meta', '10:45', '[REVIEW] Meta check', 'Which domain got neglected? One thing for biggest impact next week? Being too hard or too easy?');
+    add('meal_prep_list', '11:00', '[MEAL PREP] Grocery list', 'Review fridge. Check: eggs, chicken/fish, lentils, chickpeas, broccoli, spinach, carrots, onions, garlic, berries, bananas, avocados, oats, olive oil, seeds, nuts.');
+    add('grocery_run', '11:30', '[MEAL PREP] Grocery run', 'Get everything on the list. Check supplements: Omega-3, Mag, D+K2, Turmeric, Creatine, Collagen, L-tyrosine.');
+    add('batch_cook', '13:00', '[MEAL PREP] Batch cook', 'Cook 2 meals for the week (3-4 servings each). Prep breakfast ingredients (portion oats, wash berries). Store in glass containers.');
+    add('call_someone', '15:00', 'Call someone you love', 'This anchors the weekend in connection, not recovery.');
+    add('career_review', '15:30', '[CAREER] Weekly review (15 min)', 'What moved this week? What\'s stuck? Plan for next week.');
+    add('event_planning', '16:00', '[SOCIAL] Plan next 2 weeks', 'Review Apple Calendar for events. Pick 2 for next 2 weeks. Block the time. Check Meetup.com, Insider.in, Instagram.');
   }
 
-  // Sort by time
   steps.sort((a, b) => a.time.localeCompare(b.time));
   return steps;
+}
+
+function getWorkoutOption(day) {
+  // Alternate A/B based on which resistance day of the week
+  // Mon=A, Wed=B, Fri=A (cycles)
+  const weekNum = getWeekNumber();
+  let isA;
+  if (day === 1) isA = weekNum % 2 === 0;
+  else if (day === 3) isA = weekNum % 2 !== 0;
+  else isA = weekNum % 2 === 0;
+
+  if (isA) {
+    return 'OPTION A (Push Focus):\n- Push-ups or bench press: 3x10-12\n- Overhead press: 3x10\n- Rows: 3x12\n- Squats or lunges: 3x12\n- Core: Dead bugs or planks 2x30s';
+  } else {
+    return 'OPTION B (Pull Focus):\n- Pull-ups or lat pulldowns: 3x8-10\n- Deadlifts or hip hinges: 3x10\n- Dumbbell bench: 3x12\n- Step-ups: 3x10/side\n- Core: Pallof press or ab wheel 2x10';
+  }
+}
+
+function getWeekNumber() {
+  const now = new Date();
+  const diff = now - LAUNCH_DATE;
+  return Math.max(1, Math.ceil(diff / (7 * 24 * 60 * 60 * 1000)));
+}
+
+// ============================================
+// STORAGE ENGINE
+// ============================================
+function getTodayKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function getDateKey(date) {
+  return date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+}
+
+function loadDayData(dateKey) {
+  try {
+    const all = JSON.parse(localStorage.getItem('ops_all') || '{}');
+    return all[dateKey] || { states: {}, notes: {}, ts: 0 };
+  } catch(e) { return { states: {}, notes: {}, ts: 0 }; }
+}
+
+function saveDayData(dateKey, data) {
+  try {
+    const all = JSON.parse(localStorage.getItem('ops_all') || '{}');
+    data.ts = Date.now();
+    all[dateKey] = data;
+    // Keep only last 90 days
+    const keys = Object.keys(all).sort();
+    while (keys.length > 90) { delete all[keys.shift()]; }
+    localStorage.setItem('ops_all', JSON.stringify(all));
+    syncToServer(dateKey, data);
+  } catch(e) {}
+}
+
+function getAllDayData() {
+  try { return JSON.parse(localStorage.getItem('ops_all') || '{}'); } catch(e) { return {}; }
+}
+
+function loadReviewText(weekKey) {
+  try {
+    const reviews = JSON.parse(localStorage.getItem('ops_reviews') || '{}');
+    return reviews[weekKey] || '';
+  } catch(e) { return ''; }
+}
+
+function saveReviewText(weekKey, text) {
+  try {
+    const reviews = JSON.parse(localStorage.getItem('ops_reviews') || '{}');
+    reviews[weekKey] = text;
+    localStorage.setItem('ops_reviews', JSON.stringify(reviews));
+    syncMetaToServer();
+  } catch(e) {}
+}
+
+// ============================================
+// SYNC (Vercel KV)
+// ============================================
+let syncPassphrase = localStorage.getItem('ops_sync_pass') || '';
+
+function savePassphrase() {
+  const v = document.getElementById('syncPass').value.trim();
+  if (!v) return;
+  syncPassphrase = v;
+  localStorage.setItem('ops_sync_pass', v);
+  document.getElementById('syncSetup').style.display = 'none';
+  syncFromServer();
+  updateSyncBar('Sync enabled');
+}
+
+async function syncToServer(dateKey, data) {
+  if (!syncPassphrase) return;
+  try {
+    await fetch('/api/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pass: syncPassphrase, key: 'day:' + dateKey, value: data })
+    });
+  } catch(e) { /* offline fallback */ }
+}
+
+async function syncMetaToServer() {
+  if (!syncPassphrase) return;
+  try {
+    const reviews = localStorage.getItem('ops_reviews') || '{}';
+    await fetch('/api/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pass: syncPassphrase, key: 'meta:reviews', value: JSON.parse(reviews) })
+    });
+  } catch(e) {}
+}
+
+async function syncFromServer() {
+  if (!syncPassphrase) return;
+  try {
+    const resp = await fetch('/api/sync?pass=' + encodeURIComponent(syncPassphrase));
+    if (!resp.ok) return;
+    const remote = await resp.json();
+    if (!remote || !remote.data) return;
+
+    // Merge day data
+    const local = getAllDayData();
+    let changed = false;
+    for (const [k, v] of Object.entries(remote.data)) {
+      if (k.startsWith('day:')) {
+        const dateKey = k.slice(4);
+        const localDay = local[dateKey];
+        if (!localDay || (v.ts || 0) > (localDay.ts || 0)) {
+          local[dateKey] = v;
+          changed = true;
+        }
+      }
+      if (k === 'meta:reviews') {
+        const localReviews = JSON.parse(localStorage.getItem('ops_reviews') || '{}');
+        const merged = { ...localReviews, ...v };
+        localStorage.setItem('ops_reviews', JSON.stringify(merged));
+      }
+    }
+    if (changed) {
+      localStorage.setItem('ops_all', JSON.stringify(local));
+    }
+    updateSyncBar('Synced ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}));
+  } catch(e) {
+    updateSyncBar('Sync offline — using local data');
+  }
+}
+
+function updateSyncBar(msg) {
+  document.getElementById('syncBar').textContent = msg;
+}
+
+// ============================================
+// STREAKS
+// ============================================
+function calcStreaks() {
+  const allData = getAllDayData();
+  const today = new Date();
+  const results = {};
+
+  for (const [catId, cat] of Object.entries(STREAK_CATS)) {
+    let current = 0;
+    let best = 0;
+    let counting = true;
+
+    for (let i = 0; i < 90; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const key = getDateKey(d);
+      const dayData = allData[key];
+
+      if (!dayData) {
+        if (i === 0) continue; // today might not be done yet
+        counting = false;
+      } else {
+        // Check if ANY of the streak's steps are done
+        const anyDone = cat.steps.some(s => dayData.states && dayData.states[s] === 'done');
+        if (anyDone && counting) {
+          current++;
+        } else if (!anyDone && i > 0) {
+          counting = false;
+        }
+      }
+    }
+
+    // Calculate best streak
+    let streak = 0;
+    const sortedKeys = Object.keys(allData).sort().reverse();
+    // Simple: scan all days and find longest consecutive
+    const daySet = new Set();
+    for (const key of sortedKeys) {
+      const dd = allData[key];
+      if (dd && dd.states) {
+        const anyDone = cat.steps.some(s => dd.states[s] === 'done');
+        if (anyDone) daySet.add(key);
+      }
+    }
+    // Walk backwards from each day to find longest
+    let tempBest = 0;
+    let tempCurrent = 0;
+    for (let i = 0; i < 90; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const key = getDateKey(d);
+      if (daySet.has(key)) {
+        tempCurrent++;
+        tempBest = Math.max(tempBest, tempCurrent);
+      } else if (i > 0) {
+        tempCurrent = 0;
+      }
+    }
+    best = tempBest;
+
+    results[catId] = { current, best, label: cat.label };
+  }
+  return results;
+}
+
+function renderStreaks() {
+  const streaks = calcStreaks();
+  let html = '';
+  for (const [id, s] of Object.entries(streaks)) {
+    html += '<div class="streak-box"><strong>' + s.current + 'd</strong>' + s.label + '<br><span class="best">best: ' + s.best + 'd</span></div>';
+  }
+  document.getElementById('streaks').innerHTML = html;
+}
+
+// ============================================
+// PHASE TRACKER
+// ============================================
+function renderPhase() {
+  const week = getWeekNumber();
+  let focus;
+  if (week <= 0) focus = 'Pre-launch';
+  else if (week === 1) focus = 'Body first — grocery, posture, sunlight, book medical';
+  else if (week === 2) focus = 'Add social — dating profiles, first event, portfolio case study #1';
+  else if (week === 3) focus = 'Career engine on — portfolio, networking, BrowserStack course';
+  else focus = 'All three domains running. Maintain and push.';
+
+  document.getElementById('phaseBar').innerHTML = '<strong>Week ' + week + '</strong> — ' + focus;
+}
+
+// ============================================
+// POSTURE TIMER
+// ============================================
+let ptSeconds = 30 * 60;
+let ptInterval = null;
+let ptPaused = false;
+let ptOrigTitle = document.title;
+
+function startPostureTimer() {
+  const now = new Date();
+  const h = now.getHours();
+  const timerEl = document.getElementById('postureTimer');
+
+  if (h >= 9 && h < 17) {
+    timerEl.style.display = 'block';
+    if (!ptInterval) {
+      ptInterval = setInterval(tickPostureTimer, 1000);
+    }
+  } else {
+    timerEl.style.display = 'none';
+    if (ptInterval) { clearInterval(ptInterval); ptInterval = null; }
+  }
+}
+
+function tickPostureTimer() {
+  if (ptPaused) return;
+  ptSeconds--;
+  if (ptSeconds <= 0) {
+    // Alert!
+    document.getElementById('postureTimer').classList.add('alert');
+    document.getElementById('ptTime').textContent = 'NOW! Ribs down, tailbone tucked, ears over shoulders';
+    document.title = '⚠ POSTURE CHECK';
+    // Auto-reset after 30 seconds
+    setTimeout(() => {
+      resetPostureTimer();
+    }, 30000);
+    return;
+  }
+  const m = Math.floor(ptSeconds / 60);
+  const s = ptSeconds % 60;
+  document.getElementById('ptTime').textContent = m + ':' + String(s).padStart(2, '0');
+  document.title = ptOrigTitle;
+  document.getElementById('postureTimer').classList.remove('alert');
+}
+
+function resetPostureTimer() {
+  ptSeconds = 30 * 60;
+  ptPaused = false;
+  document.getElementById('postureTimer').classList.remove('alert');
+  document.title = ptOrigTitle;
+}
+
+function pausePostureTimer() {
+  ptPaused = !ptPaused;
+}
+
+// ============================================
+// RENDER TODAY VIEW
+// ============================================
+function renderToday() {
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const steps = getSteps();
+  const dateKey = getTodayKey();
+  const dayData = loadDayData(dateKey);
+
+  document.getElementById('clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('dayInfo').textContent = DAYS[now.getDay()] + ', ' + now.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
+
+  let html = '';
+  let currentFound = false;
+  let totalSteps = steps.length;
+  let doneCount = 0;
+  let skippedCount = 0;
+
+  for (let i = 0; i < steps.length; i++) {
+    const s = steps[i];
+    const sMin = timeToMinutes(s.time);
+    const nextMin = (i + 1 < steps.length) ? timeToMinutes(steps[i+1].time) : 1440;
+    const state = dayData.states[s.id] || 'pending'; // done, skipped, pending
+    const note = dayData.notes[s.id] || '';
+    const isCurrent = nowMin >= sMin && nowMin < nextMin && !currentFound && state === 'pending';
+    const isPast = nowMin >= nextMin;
+
+    if (state === 'done') doneCount++;
+    if (state === 'skipped') skippedCount++;
+
+    if (s.section) html += '<h2>' + s.section + '</h2>';
+
+    let cls = 'step';
+    if (isCurrent) { cls += ' is-current expanded'; currentFound = true; }
+    else if (state === 'done') cls += ' is-done';
+    else if (state === 'skipped') cls += ' is-skipped';
+    else if (isPast) cls += ' is-past';
+
+    const stateIcon = state === 'done' ? '&#10003;' : state === 'skipped' ? '&#10007;' : '';
+    const stateCls = state === 'done' ? 'done' : state === 'skipped' ? 'skipped' : '';
+    const arrow = isCurrent ? '<span class="step-arrow">&rarr; </span>' : '';
+    const noteIcon = note ? '[note]' : '[+]';
+    const noteCls = note ? 'step-note-btn has-note' : 'step-note-btn';
+
+    html += '<div class="' + cls + '" data-id="' + s.id + '">';
+    html += '<div class="step-row">';
+    html += '<div class="step-state ' + stateCls + '" data-id="' + s.id + '" onclick="cycleState(\'' + s.id + '\')">' + stateIcon + '</div>';
+    html += '<div class="step-label" onclick="toggleExpand(this.parentNode.parentNode)">' + arrow + '<span class="step-time">' + formatTime(s.time) + '</span> ' + s.short;
+    html += ' <span class="' + noteCls + '" onclick="event.stopPropagation();toggleNote(\'' + s.id + '\')">' + noteIcon + '</span>';
+    html += '</div></div>';
+
+    if (s.long) {
+      html += '<div class="step-detail">' + s.long.replace(/\n/g, '<br>') + '</div>';
+    }
+
+    html += '<div class="step-note-area" id="note-' + s.id + '"><input type="text" placeholder="Log what you did..." value="' + escHtml(note) + '" onchange="saveNote(\'' + s.id + '\',this.value)" onclick="event.stopPropagation()"></div>';
+    html += '</div>';
+  }
+
+  // Summary at top
+  const pct = totalSteps > 0 ? Math.round((doneCount / totalSteps) * 100) : 0;
+  const summary = '<div style="margin-bottom:8px;font-size:0.9em"><strong>' + pct + '%</strong> done (' + doneCount + '/' + totalSteps + ' done, ' + skippedCount + ' skipped)</div>';
+
+  document.getElementById('steps').innerHTML = summary + html;
+
+  // Scroll to current on first render
+  if (!window._scrolledToday) {
+    const el = document.querySelector('.is-current');
+    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); window._scrolledToday = true; }
+  }
+}
+
+function cycleState(id) {
+  const dateKey = getTodayKey();
+  const data = loadDayData(dateKey);
+  const current = data.states[id] || 'pending';
+  const next = current === 'pending' ? 'done' : current === 'done' ? 'skipped' : 'pending';
+  data.states[id] = next;
+  saveDayData(dateKey, data);
+  renderToday();
+  renderStreaks();
+}
+
+function toggleExpand(el) {
+  el.classList.toggle('expanded');
+}
+
+function toggleNote(id) {
+  const el = document.getElementById('note-' + id);
+  el.classList.toggle('open');
+  if (el.classList.contains('open')) el.querySelector('input').focus();
+}
+
+function saveNote(id, val) {
+  const dateKey = getTodayKey();
+  const data = loadDayData(dateKey);
+  data.notes[id] = val;
+  saveDayData(dateKey, data);
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function timeToMinutes(t) {
@@ -150,94 +709,274 @@ function formatTime(t) {
   const [h, m] = t.split(':').map(Number);
   const ampm = h >= 12 ? 'PM' : 'AM';
   const h12 = h % 12 || 12;
-  return h12 + ':' + String(m).padStart(2, '0') + ' ' + ampm;
+  return h12 + ':' + String(m).padStart(2,'0') + ' ' + ampm;
 }
 
-function getTodayKey() {
-  const d = new Date();
-  return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
-}
+// ============================================
+// HISTORY VIEW
+// ============================================
+function renderHistory() {
+  const allData = getAllDayData();
+  const today = new Date();
+  const grid = document.getElementById('historyGrid');
 
-function loadChecked() {
-  try {
-    const data = JSON.parse(localStorage.getItem('ops_checked') || '{}');
-    if (data.date === getTodayKey()) return data.items || {};
-    return {};
-  } catch(e) { return {}; }
-}
-
-function saveChecked(items) {
-  localStorage.setItem('ops_checked', JSON.stringify({ date: getTodayKey(), items }));
-}
-
-function render() {
-  const now = new Date();
-  const nowMin = now.getHours() * 60 + now.getMinutes();
-  const steps = getSteps();
-  const checked = loadChecked();
-  const dayName = DAYS[now.getDay()];
-
-  document.getElementById('clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  document.getElementById('dayInfo').textContent = dayName + ', ' + now.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
-
+  // Header row
   let html = '';
-  let currentFound = false;
+  ['M','T','W','T','F','S','S'].forEach(d => html += '<div style="font-weight:bold;opacity:0.5">' + d + '</div>');
 
-  for (let i = 0; i < steps.length; i++) {
-    const s = steps[i];
-    const sMin = timeToMinutes(s.time);
-    const nextMin = (i + 1 < steps.length) ? timeToMinutes(steps[i+1].time) : 1440;
-    const isCurrent = nowMin >= sMin && nowMin < nextMin && !currentFound;
-    const isPast = nowMin >= nextMin;
-    const isChecked = checked[i] === true;
+  // Find start (Monday 5 weeks ago)
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 34);
+  // Align to Monday
+  while (startDate.getDay() !== 1) startDate.setDate(startDate.getDate() - 1);
 
-    if (s.section) {
-      html += '<h2>' + s.section + '</h2>';
+  for (let i = 0; i < 35; i++) {
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + i);
+    const key = getDateKey(d);
+    const dd = allData[key];
+    const isToday = key === getTodayKey();
+    const isFuture = d > today;
+
+    let pct = '';
+    if (dd && dd.states && !isFuture) {
+      const total = Object.keys(dd.states).length;
+      const done = Object.values(dd.states).filter(s => s === 'done').length;
+      pct = total > 0 ? Math.round((done / total) * 100) + '%' : '';
     }
 
-    let cls = '';
-    if (isCurrent && !isChecked) { cls = 'current'; currentFound = true; }
-    else if (isPast || isChecked) { cls = 'past'; }
-
-    const checkedAttr = isChecked ? ' checked' : '';
-    const doneClass = isChecked ? ' done' : '';
-    const arrow = isCurrent && !isChecked ? '<span class="arrow">&rarr;</span>' : '';
-
-    html += '<label class="' + cls + '">';
-    html += '<input type="checkbox" data-idx="' + i + '"' + checkedAttr + '> ';
-    html += arrow;
-    html += '<span class="' + doneClass + '">';
-    html += '<strong>' + formatTime(s.time) + '</strong> — ' + s.text;
-    html += '</span></label>';
+    html += '<div class="hist-day' + (isToday ? ' today' : '') + '" onclick="showHistoryDetail(\'' + key + '\')" ' + (isFuture ? 'style="opacity:0.2"' : '') + '>';
+    html += '<div class="date">' + d.getDate() + '</div>';
+    html += '<div class="pct">' + pct + '</div>';
+    html += '</div>';
   }
 
-  // Minimum viable day reminder
-  html += '<h2>IF EVERYTHING FALLS APART</h2>';
-  html += '<p>Minimum viable day: 20-min walk outside + 10 min posture work. That is it. Do not let today become a zero day.</p>';
-
-  document.getElementById('steps').innerHTML = html;
-
-  // Scroll to current
-  const currentEl = document.querySelector('.current');
-  if (currentEl) {
-    currentEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
+  grid.innerHTML = html;
 }
 
-document.getElementById('steps').addEventListener('change', function(e) {
-  if (e.target.type === 'checkbox') {
-    const idx = parseInt(e.target.dataset.idx);
-    const checked = loadChecked();
-    checked[idx] = e.target.checked;
-    saveChecked(checked);
-    render();
+function showHistoryDetail(dateKey) {
+  const dd = loadDayData(dateKey);
+  const el = document.getElementById('historyDetail');
+  if (!dd || !dd.states || Object.keys(dd.states).length === 0) {
+    el.innerHTML = '<strong>' + dateKey + '</strong>: No data';
+    el.style.display = 'block';
+    return;
   }
-});
 
-render();
-// Update clock every minute
-setInterval(render, 60000);
+  let html = '<strong>' + dateKey + '</strong><br>';
+  const done = [];
+  const skipped = [];
+  const notes = [];
+
+  for (const [id, state] of Object.entries(dd.states)) {
+    if (state === 'done') done.push(id.replace(/_/g, ' '));
+    if (state === 'skipped') skipped.push(id.replace(/_/g, ' '));
+  }
+  if (dd.notes) {
+    for (const [id, note] of Object.entries(dd.notes)) {
+      if (note) notes.push('<em>' + id.replace(/_/g, ' ') + ':</em> ' + escHtml(note));
+    }
+  }
+
+  html += '<br><strong>Done (' + done.length + '):</strong> ' + (done.join(', ') || 'none');
+  html += '<br><strong>Skipped (' + skipped.length + '):</strong> ' + (skipped.join(', ') || 'none');
+  if (notes.length) html += '<br><br><strong>Notes:</strong><br>' + notes.join('<br>');
+
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+
+// ============================================
+// SUNDAY REVIEW
+// ============================================
+function renderReview() {
+  const allData = getAllDayData();
+  const today = new Date();
+  const weekStart = new Date(today);
+  weekStart.setDate(weekStart.getDate() - 6);
+  const weekKey = getDateKey(weekStart) + '_' + getDateKey(today);
+
+  // Calculate week stats
+  let totalDone = 0, totalSteps = 0, totalSkipped = 0;
+  const domainDone = { body: 0, bodyTotal: 0, social: 0, socialTotal: 0, career: 0, careerTotal: 0 };
+  const bodySteps = ['super_water','super_coffee','morning_sun','posture_routine','breakfast','lunch','afternoon_sun','workout','myofascial','dinner','wind_down','sleep_protocol','lights_out'];
+  const socialSteps = ['evening_walk','dating_check','coffee_social','sat_social','call_someone','event_planning'];
+  const careerSteps = ['career','skill_practice','reading','career_review'];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dd = allData[getDateKey(d)];
+    if (!dd || !dd.states) continue;
+
+    for (const [id, state] of Object.entries(dd.states)) {
+      totalSteps++;
+      if (state === 'done') {
+        totalDone++;
+        if (bodySteps.includes(id)) domainDone.body++;
+        if (socialSteps.includes(id)) domainDone.social++;
+        if (careerSteps.includes(id)) domainDone.career++;
+      }
+      if (state === 'skipped') totalSkipped++;
+      if (bodySteps.includes(id)) domainDone.bodyTotal++;
+      if (socialSteps.includes(id)) domainDone.socialTotal++;
+      if (careerSteps.includes(id)) domainDone.careerTotal++;
+    }
+  }
+
+  const streaks = calcStreaks();
+  const pct = totalSteps > 0 ? Math.round((totalDone / totalSteps) * 100) : 0;
+
+  // Collect week's notes
+  let allNotes = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = getDateKey(d);
+    const dd = allData[key];
+    if (!dd || !dd.notes) continue;
+    for (const [id, note] of Object.entries(dd.notes)) {
+      if (note) allNotes.push(DAYS[d.getDay()] + ' — ' + id.replace(/_/g, ' ') + ': ' + note);
+    }
+  }
+
+  let html = '<h2>WEEKLY REVIEW</h2>';
+  html += '<div class="domain-score">Overall: ' + pct + '% (' + totalDone + '/' + totalSteps + ' done, ' + totalSkipped + ' skipped)</div>';
+
+  html += '<h2>STREAKS</h2>';
+  for (const [id, s] of Object.entries(streaks)) {
+    html += s.label + ': <strong>' + s.current + ' days</strong> (best: ' + s.best + ')<br>';
+  }
+
+  html += '<h2>DOMAIN SCORES (This Week)</h2>';
+  const bp = domainDone.bodyTotal > 0 ? Math.round((domainDone.body / domainDone.bodyTotal) * 100) : 0;
+  const sp = domainDone.socialTotal > 0 ? Math.round((domainDone.social / domainDone.socialTotal) * 100) : 0;
+  const cp = domainDone.careerTotal > 0 ? Math.round((domainDone.career / domainDone.careerTotal) * 100) : 0;
+  html += 'Body & Health: <strong>' + bp + '%</strong><br>';
+  html += 'Dating & Social: <strong>' + sp + '%</strong><br>';
+  html += 'Career & Money: <strong>' + cp + '%</strong><br>';
+
+  html += '<h2>REVIEW QUESTIONS</h2>';
+  html += '<div class="review-q"><strong>Body:</strong> Did I cook at home most days? Posture work daily? Got sunlight? How\'s sleep?</div>';
+  html += '<div class="review-q"><strong>Social:</strong> How many new people did I meet? Date or event? Following up?</div>';
+  html += '<div class="review-q"><strong>Career:</strong> Portfolio progress? Outreach sent? Financial runway?</div>';
+  html += '<div class="review-q"><strong>Meta:</strong> Which domain got neglected? One thing for biggest impact next week?</div>';
+
+  if (allNotes.length) {
+    html += '<h2>THIS WEEK\'S NOTES</h2>';
+    html += allNotes.map(n => '&bull; ' + escHtml(n)).join('<br>');
+  }
+
+  html += '<h2>REFLECTION</h2>';
+  html += '<textarea id="reviewTextarea" placeholder="Write your weekly reflection here...">' + escHtml(loadReviewText(weekKey)) + '</textarea>';
+
+  document.getElementById('sundayReview').innerHTML = html;
+
+  // Save on change
+  setTimeout(() => {
+    const ta = document.getElementById('reviewTextarea');
+    if (ta) ta.addEventListener('input', () => saveReviewText(weekKey, ta.value));
+  }, 100);
+}
+
+// ============================================
+// VIEW SWITCHING
+// ============================================
+let currentView = 'today';
+
+function showView(view) {
+  currentView = view;
+  document.getElementById('todayView').style.display = view === 'today' ? '' : 'none';
+  document.getElementById('historyView').style.display = view === 'history' ? '' : 'none';
+  document.getElementById('reviewView').style.display = view === 'review' ? '' : 'none';
+  document.getElementById('lawsBox').style.display = view === 'today' ? '' : 'none';
+
+  document.getElementById('btnToday').className = view === 'today' ? 'active' : '';
+  document.getElementById('btnHistory').className = view === 'history' ? 'active' : '';
+  document.getElementById('btnReview').className = view === 'review' ? 'active' : '';
+
+  if (view === 'history') renderHistory();
+  if (view === 'review') renderReview();
+}
+
+// ============================================
+// EMERGENCY
+// ============================================
+function toggleEmergency() {
+  const p = document.getElementById('emergencyPanel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+
+// ============================================
+// PWA
+// ============================================
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'ops-v1';
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
+      self.skipWaiting();
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(
+        fetch(e.request).then(r => {
+          const clone = r.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+          return r;
+        }).catch(() => caches.match(e.request))
+      );
+    });
+  `;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+}
+
+// Inline manifest
+const manifest = {
+  name: "Today's Operations",
+  short_name: "OPS",
+  start_url: "/",
+  display: "standalone",
+  background_color: "#ffffff",
+  theme_color: "#ffffff"
+};
+const mLink = document.createElement('link');
+mLink.rel = 'manifest';
+mLink.href = 'data:application/json,' + encodeURIComponent(JSON.stringify(manifest));
+document.head.appendChild(mLink);
+
+// ============================================
+// INIT
+// ============================================
+function init() {
+  renderPhase();
+  renderStreaks();
+  renderToday();
+  startPostureTimer();
+
+  // Sync setup
+  if (!syncPassphrase) {
+    document.getElementById('syncSetup').style.display = 'block';
+    updateSyncBar('Not synced — local only');
+  } else {
+    updateSyncBar('Syncing...');
+    syncFromServer().then(() => {
+      renderStreaks();
+      renderToday();
+    });
+  }
+
+  // Auto-update every minute
+  setInterval(() => {
+    renderToday();
+    startPostureTimer();
+  }, 60000);
+
+  // Refresh streaks every 5 min
+  setInterval(renderStreaks, 300000);
+}
+
+init();
 </script>
-
 </body>
 </html>
