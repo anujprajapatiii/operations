@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Today's Operations</title>
+<style>
+body { font-family: monospace; max-width: 700px; margin: 20px auto; padding: 0 15px; }
+.current { font-weight: bold; background: #ffffcc; }
+.done { text-decoration: line-through; opacity: 0.5; }
+.past { opacity: 0.6; }
+h2 { border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-top: 30px; }
+.arrow { margin-right: 4px; }
+label { display: block; padding: 4px 0; cursor: pointer; }
+#clock { font-size: 1.2em; }
+.laws { background: #f5f5f5; padding: 10px; margin-bottom: 20px; }
+details { margin: 8px 0; }
+summary { cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1>TODAY'S OPS</h1>
+<div id="clock"></div>
+<div id="dayInfo"></div>
+
+<div class="laws">
+<strong>THE LAWS</strong><br>
+1. Never lie down during the day<br>
+2. Phone away until after breakfast<br>
+3. Food is cooked, not ordered<br>
+4. Write everything down<br>
+5. Go outside every single day<br>
+6. Momentum is your most valuable asset<br>
+7. When lost: water &rarr; real food &rarr; walk
+</div>
+
+<div id="steps"></div>
+
+<script>
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function getSteps() {
+  const d = new Date();
+  const day = d.getDay(); // 0=Sun
+  const dayName = DAYS[day];
+
+  const steps = [];
+
+  // === MORNING ===
+  steps.push({ time: '07:00', text: 'Super Water — 500ml water + chia seeds + creatine', section: 'MORNING' });
+  steps.push({ time: '07:40', text: 'Super Coffee (black coffee/matcha + cacao) + Supplements (Omega-3, Mag, D+K2, Turmeric)' });
+  steps.push({ time: '07:50', text: 'Morning Sunlight — terrace, 15-20 min. Dead hang 30 sec. No phone.' });
+  steps.push({ time: '08:10', text: 'Posture Routine (12 min) — Hip Flexor Couch Stretch 90s/side, Chest Doorway Stretch 60s/side, Cat-Cow x10, Dead Bugs 3x10/side, Glute Bridges 3x15, Wall Slides 3x10' });
+  steps.push({ time: '08:30', text: 'Breakfast — oats + berries + yoghurt + eggs' });
+
+  // === WORK ===
+  steps.push({ time: '09:00', text: 'Work starts. Set 30-min posture timer (ribs down, tailbone tucked, ears over shoulders).', section: 'WORK' });
+
+  // Day-specific career tasks
+  if (day === 1) steps.push({ time: '09:30', text: '[CAREER] 30 min portfolio work (case study writing/design)' });
+  if (day === 2) steps.push({ time: '09:30', text: '[CAREER] 15 min — send 1 outreach message (LinkedIn/email/WhatsApp)' });
+  if (day === 3) steps.push({ time: '09:30', text: '[CAREER] 30 min portfolio work (case study writing/design)' });
+  if (day === 4) steps.push({ time: '09:30', text: '[CAREER] 15 min outreach message + 15 min financial check-in (account balances, weekly spending)' });
+  if (day === 5) steps.push({ time: '09:30', text: '[CAREER] 30 min — review job boards, apply to 1-2 roles' });
+
+  // === AFTERNOON ===
+  steps.push({ time: '12:30', text: 'Lunch — batch-cooked meal. Half plate veggies, quarter protein, quarter healthy fats.', section: 'AFTERNOON' });
+  steps.push({ time: '16:30', text: 'Afternoon Sunlight — terrace, 20-30 min. No scrolling. Walk around, breathe, look at the sky.' });
+
+  // === EVENING ===
+  // Workout varies by day
+  if (day === 1 || day === 3 || day === 5) {
+    steps.push({ time: '17:20', text: 'Resistance Training (45-60 min) — 10 min warmup (dead bugs, glute bridges, wall slides), then 4-5 compound movements, finish with 2 min kegels', section: 'EVENING' });
+  } else if (day === 2 || day === 4) {
+    steps.push({ time: '17:20', text: 'Zone 2 Cardio (brisk walk or cycle) + Yoga/Posture deep work (40 min) — warmup, cardio, finish with 2 min kegels', section: 'EVENING' });
+  } else if (day === 6) {
+    steps.push({ time: '17:20', text: 'Martial Arts class — Krav Maga / Boxing (60 min). Talk to people before and after class.', section: 'EVENING' });
+  } else {
+    steps.push({ time: '17:20', text: 'Active recovery — long walk, swimming, or mobility work (30-45 min)', section: 'EVENING' });
+  }
+
+  // Myofascial release on Tue, Thu, Sun
+  if (day === 2 || day === 4 || day === 0) {
+    steps.push({ time: '18:30', text: 'Myofascial Release (15-20 min) — Foam roll thoracic spine 2 min, IT band & quads 2 min/side, Lacrosse ball glutes 90s/side, Upper trap 90s/side, Plantar fascia 60s/foot, Diaphragm breathing 2 min' });
+  }
+
+  steps.push({ time: '19:00', text: 'Dinner — protein + roasted veg. Kitchen closes at 7:30 PM.' });
+
+  // Evening walk Mon-Fri
+  if (day >= 1 && day <= 5) {
+    steps.push({ time: '19:30', text: 'Evening walk — talk to at least 1 person (shopkeeper, neighbour, anyone)' });
+  }
+
+  // Dating app check daily, Shaadi on Tue/Thu
+  if (day === 2 || day === 4) {
+    steps.push({ time: '20:00', text: 'Dating app check (10 min max) + Reply to Shaadi messages (15 min)' });
+  } else {
+    steps.push({ time: '20:00', text: 'Dating app check (10 min max). Swipe intentionally.' });
+  }
+
+  // Coffee with someone Wed or Thu
+  if (day === 3 || day === 4) {
+    steps.push({ time: '20:15', text: '[SOCIAL] Did you have coffee with someone today? If not, text someone now for tomorrow.' });
+  }
+
+  // === NIGHT ===
+  steps.push({ time: '21:00', text: 'Screens to warm/night mode. No work emails. No Slack. Soft light only.', section: 'NIGHT' });
+
+  // Mon/Wed evening problem framing
+  if (day === 1 || day === 3) {
+    steps.push({ time: '21:15', text: '[SKILL] Problem framing practice — write problem statements for current work tickets' });
+  }
+
+  steps.push({ time: '21:30', text: 'Optional wind-down — Chin tucks lying down 2x10 (hold 5s), 90-90 Hip Stretch 60s/side' });
+  steps.push({ time: '22:20', text: 'Reading time — strategy/design books' });
+  steps.push({ time: '23:00', text: 'Sleep protocol — foam earplugs in, blackout room, HEPA filter on, cool room, phone face down' });
+  steps.push({ time: '23:30', text: 'Lights out. 5 sleep cycles to 7 AM.' });
+
+  // === SATURDAY EXTRAS ===
+  if (day === 6) {
+    steps.push({ time: '20:30', text: '[SOCIAL] Saturday night is for going out. No gaming. No bingeing. Be with people.', section: 'SATURDAY SOCIAL' });
+  }
+
+  // === SUNDAY EXTRAS ===
+  if (day === 0) {
+    steps.push({ time: '10:00', text: '[WEEKLY REVIEW] Body — Did I cook at home most days? Posture work daily? Got sunlight? How is sleep?', section: 'SUNDAY REVIEW & PREP' });
+    steps.push({ time: '10:15', text: '[WEEKLY REVIEW] Social — How many new people did I meet? Date or event attended? Following up with contacts?' });
+    steps.push({ time: '10:30', text: '[WEEKLY REVIEW] Career — Portfolio progress? Outreach sent? Financial runway status?' });
+    steps.push({ time: '10:45', text: '[WEEKLY REVIEW] Meta — Which domain got neglected? One thing for biggest impact next week? Being too hard or too easy on yourself?' });
+    steps.push({ time: '11:00', text: '[MEAL PREP] Review fridge, make grocery list' });
+    steps.push({ time: '11:30', text: '[MEAL PREP] Grocery run' });
+    steps.push({ time: '13:00', text: '[MEAL PREP] Batch cook 2 meals for the week. Prep breakfast ingredients. Check supplement supply.' });
+    steps.push({ time: '15:00', text: 'Call someone you love.' });
+    steps.push({ time: '15:30', text: '[CAREER] 15 min — weekly review: what moved, what is stuck?' });
+    steps.push({ time: '16:00', text: '[SOCIAL] Review Apple Calendar for upcoming events. Pick 2 for next 2 weeks. Block the time.' });
+  }
+
+  // Sort by time
+  steps.sort((a, b) => a.time.localeCompare(b.time));
+  return steps;
+}
+
+function timeToMinutes(t) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function formatTime(t) {
+  const [h, m] = t.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return h12 + ':' + String(m).padStart(2, '0') + ' ' + ampm;
+}
+
+function getTodayKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+}
+
+function loadChecked() {
+  try {
+    const data = JSON.parse(localStorage.getItem('ops_checked') || '{}');
+    if (data.date === getTodayKey()) return data.items || {};
+    return {};
+  } catch(e) { return {}; }
+}
+
+function saveChecked(items) {
+  localStorage.setItem('ops_checked', JSON.stringify({ date: getTodayKey(), items }));
+}
+
+function render() {
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const steps = getSteps();
+  const checked = loadChecked();
+  const dayName = DAYS[now.getDay()];
+
+  document.getElementById('clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('dayInfo').textContent = dayName + ', ' + now.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
+
+  let html = '';
+  let currentFound = false;
+
+  for (let i = 0; i < steps.length; i++) {
+    const s = steps[i];
+    const sMin = timeToMinutes(s.time);
+    const nextMin = (i + 1 < steps.length) ? timeToMinutes(steps[i+1].time) : 1440;
+    const isCurrent = nowMin >= sMin && nowMin < nextMin && !currentFound;
+    const isPast = nowMin >= nextMin;
+    const isChecked = checked[i] === true;
+
+    if (s.section) {
+      html += '<h2>' + s.section + '</h2>';
+    }
+
+    let cls = '';
+    if (isCurrent && !isChecked) { cls = 'current'; currentFound = true; }
+    else if (isPast || isChecked) { cls = 'past'; }
+
+    const checkedAttr = isChecked ? ' checked' : '';
+    const doneClass = isChecked ? ' done' : '';
+    const arrow = isCurrent && !isChecked ? '<span class="arrow">&rarr;</span>' : '';
+
+    html += '<label class="' + cls + '">';
+    html += '<input type="checkbox" data-idx="' + i + '"' + checkedAttr + '> ';
+    html += arrow;
+    html += '<span class="' + doneClass + '">';
+    html += '<strong>' + formatTime(s.time) + '</strong> — ' + s.text;
+    html += '</span></label>';
+  }
+
+  // Minimum viable day reminder
+  html += '<h2>IF EVERYTHING FALLS APART</h2>';
+  html += '<p>Minimum viable day: 20-min walk outside + 10 min posture work. That is it. Do not let today become a zero day.</p>';
+
+  document.getElementById('steps').innerHTML = html;
+
+  // Scroll to current
+  const currentEl = document.querySelector('.current');
+  if (currentEl) {
+    currentEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+document.getElementById('steps').addEventListener('change', function(e) {
+  if (e.target.type === 'checkbox') {
+    const idx = parseInt(e.target.dataset.idx);
+    const checked = loadChecked();
+    checked[idx] = e.target.checked;
+    saveChecked(checked);
+    render();
+  }
+});
+
+render();
+// Update clock every minute
+setInterval(render, 60000);
+</script>
+
+</body>
+</html>
