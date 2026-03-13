@@ -90,6 +90,68 @@ h2{border-bottom:1px solid #ccc;padding:4px 0;margin:24px 0 8px;font-size:1.05em
 
 /* MVD */
 .mvd{margin-top:20px;padding:10px;background:#fff8f0;border:1px solid #eda;font-size:0.9em}
+
+/* === IMMERSIVE MODE === */
+body.immersive{background:#0a0a0f;color:#e0e0e0;max-width:480px;padding:10px 15px 40px}
+body.immersive h1,body.immersive h2{color:#e0e0e0;border-color:#2a2a3e}
+
+.imm-greeting{text-align:center;font-size:1.4em;padding:24px 0 4px;opacity:0.5;letter-spacing:0.05em}
+.imm-sub{text-align:center;font-size:0.85em;opacity:0.3;margin-bottom:20px}
+
+.imm-progress{text-align:center;margin:0 auto 8px;max-width:280px}
+.imm-progress-bar{height:4px;background:#1a1a2e;border-radius:2px;overflow:hidden;margin-bottom:6px}
+.imm-progress-fill{height:100%;background:linear-gradient(90deg,#4ade80,#22d3ee);transition:width 0.6s ease;border-radius:2px}
+.imm-progress-text{font-size:0.78em;opacity:0.35}
+.imm-remaining{text-align:center;font-size:0.75em;opacity:0.25;margin-bottom:20px}
+
+.imm-streaks{display:flex;justify-content:center;gap:12px;margin-bottom:24px;font-size:0.8em;opacity:0.5}
+.imm-streak-item{display:flex;align-items:center;gap:3px}
+.imm-streak-fire{color:#f97316}
+
+.imm-cards{display:flex;flex-direction:column;gap:12px;padding:0 4px}
+.imm-card{background:#12121f;border:1px solid #2a2a3e;border-radius:14px;padding:20px;cursor:pointer;transition:all 0.25s ease;position:relative;overflow:hidden;animation:immCardEnter 0.4s ease both}
+.imm-card:nth-child(2){animation-delay:0.08s}
+.imm-card:nth-child(3){animation-delay:0.16s}
+.imm-card:hover{border-color:#4a4a6e;transform:translateY(-2px)}
+.imm-card:active{transform:scale(0.98)}
+.imm-card.recommended{border-color:#4ade80;box-shadow:0 0 24px rgba(74,222,128,0.08),inset 0 0 24px rgba(74,222,128,0.02)}
+.imm-card.recommended::before{content:'RECOMMENDED';position:absolute;top:10px;right:14px;font-size:0.6em;letter-spacing:0.12em;color:#4ade80;opacity:0.7}
+.imm-card.overdue{border-color:#f8717166}
+.imm-card-emoji{font-size:1.8em;margin-bottom:6px}
+.imm-card-label{font-size:1.05em;font-weight:bold;margin-bottom:4px;line-height:1.3}
+.imm-card-meta{font-size:0.78em;opacity:0.35;display:flex;gap:10px;align-items:center}
+.imm-card-meta .overdue-tag{color:#f87171;opacity:1}
+.imm-card-meta .streak-risk{color:#f97316;opacity:1}
+.imm-combo{text-align:center;font-size:0.8em;color:#facc15;opacity:0.7;margin-bottom:12px;min-height:1.2em}
+
+@keyframes immCardEnter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.imm-expanded{padding:24px 8px;text-align:center;animation:immCardEnter 0.35s ease both}
+.imm-expanded-emoji{font-size:3em;margin-bottom:10px}
+.imm-expanded-label{font-size:1.3em;font-weight:bold;margin-bottom:6px}
+.imm-expanded-time{font-size:0.85em;opacity:0.35;margin-bottom:16px}
+.imm-expanded-desc{font-size:0.88em;opacity:0.6;line-height:1.7;margin-bottom:20px;text-align:left;padding:0 8px;white-space:pre-line}
+.imm-expanded-note{width:100%;font-family:monospace;font-size:0.85em;padding:8px 10px;border:1px solid #2a2a3e;background:#0d0d18;color:#e0e0e0;border-radius:8px;margin-bottom:20px}
+.imm-expanded-note::placeholder{color:#555}
+.imm-expanded-actions{display:flex;gap:12px;justify-content:center}
+.imm-btn-done{background:#4ade80;color:#000;border:none;padding:14px 36px;font-family:monospace;font-size:1em;font-weight:bold;border-radius:10px;cursor:pointer;letter-spacing:0.05em;transition:transform 0.15s}
+.imm-btn-done:active{transform:scale(0.95)}
+.imm-btn-skip{background:transparent;color:#666;border:1px solid #333;padding:14px 24px;font-family:monospace;font-size:1em;border-radius:10px;cursor:pointer;transition:transform 0.15s}
+.imm-btn-skip:active{transform:scale(0.95)}
+.imm-btn-back{background:transparent;color:#444;border:none;font-family:monospace;font-size:0.85em;cursor:pointer;margin-top:16px;padding:8px}
+
+.imm-celebration{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:3.5em;background:rgba(10,10,15,0.92);z-index:50;animation:immCelebFade 1.2s ease forwards;pointer-events:none}
+@keyframes immCelebFade{0%{opacity:0;transform:scale(0.5)}30%{opacity:1;transform:scale(1.15)}55%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0.9)}}
+
+.imm-victory{text-align:center;padding:60px 20px;animation:immCardEnter 0.5s ease both}
+.imm-victory-emoji{font-size:4em;margin-bottom:16px}
+.imm-victory-text{font-size:1.2em;opacity:0.6;margin-bottom:8px}
+.imm-victory-stats{font-size:0.85em;opacity:0.35;line-height:1.8}
+
+.imm-exit{position:fixed;top:12px;right:12px;background:transparent;border:1px solid #333;color:#555;font-family:monospace;font-size:0.78em;padding:5px 12px;cursor:pointer;border-radius:6px;z-index:60}
+.imm-exit:hover{border-color:#666;color:#999}
+
+.imm-bad-day{position:fixed;bottom:16px;right:16px;background:transparent;border:1px solid #331111;color:#663333;font-family:monospace;font-size:0.75em;padding:5px 10px;cursor:pointer;border-radius:6px;z-index:60}
 </style>
 </head>
 <body>
@@ -109,10 +171,11 @@ h2{border-bottom:1px solid #ccc;padding:4px 0;margin:24px 0 8px;font-size:1.05em
 
 <div id="streaks"></div>
 
-<div class="nav-btns">
+<div class="nav-btns" id="navBtns">
   <button onclick="showView('today')" id="btnToday" class="active">Today</button>
   <button onclick="showView('history')" id="btnHistory">History (30d)</button>
   <button onclick="showView('review')" id="btnReview">Weekly Review</button>
+  <button onclick="enterImmersiveMode()" id="btnFocus">Focus</button>
 </div>
 
 <div class="laws" id="lawsBox">
@@ -132,6 +195,22 @@ h2{border-bottom:1px solid #ccc;padding:4px 0;margin:24px 0 8px;font-size:1.05em
     <strong>IF EVERYTHING FALLS APART</strong><br>
     Minimum viable day: 20-min walk outside + 10 min posture work. Do not let today become a zero day.
   </div>
+</div>
+
+<div id="immersiveView" style="display:none">
+  <div id="immGreeting" class="imm-greeting"></div>
+  <div id="immSub" class="imm-sub"></div>
+  <div id="immProgress" class="imm-progress">
+    <div class="imm-progress-bar"><div class="imm-progress-fill" id="immFill"></div></div>
+    <div class="imm-progress-text" id="immPct"></div>
+  </div>
+  <div id="immRemaining" class="imm-remaining"></div>
+  <div id="immStreaks" class="imm-streaks"></div>
+  <div id="immCombo" class="imm-combo"></div>
+  <div id="immCards" class="imm-cards"></div>
+  <div id="immExpanded" class="imm-expanded" style="display:none"></div>
+  <div id="immVictory" class="imm-victory" style="display:none"></div>
+  <div id="immCelebration" class="imm-celebration" style="display:none"></div>
 </div>
 
 <div id="historyView" style="display:none">
@@ -885,6 +964,9 @@ function renderReview() {
 let currentView = 'today';
 
 function showView(view) {
+  // If in immersive mode, exit first
+  if (immersiveActive) exitImmersiveMode();
+
   currentView = view;
   document.getElementById('todayView').style.display = view === 'today' ? '' : 'none';
   document.getElementById('historyView').style.display = view === 'history' ? '' : 'none';
@@ -897,6 +979,382 @@ function showView(view) {
 
   if (view === 'history') renderHistory();
   if (view === 'review') renderReview();
+}
+
+// ============================================
+// IMMERSIVE MODE
+// ============================================
+let immersiveActive = localStorage.getItem('ops_immersive') !== 'false'; // default true
+let immSelectedCard = null;
+let immCombo = 0;
+
+const STEP_EMOJI = {
+  super_water: '\u{1F4A7}', super_coffee: '\u2615', morning_sun: '\u2600\uFE0F', afternoon_sun: '\u2600\uFE0F',
+  posture_routine: '\u{1F9D8}', breakfast: '\u{1F373}', lunch: '\u{1F957}', dinner: '\u{1F37D}\uFE0F',
+  work_start: '\u{1F4BB}', career: '\u{1F4BC}', skill_practice: '\u{1F9E0}',
+  workout: '\u{1F4AA}', myofascial: '\u{1F9CB}',
+  evening_walk: '\u{1F6B6}', dating_check: '\u{1F4AC}', coffee_social: '\u2615',
+  screens_warm: '\u{1F319}', wind_down: '\u{1F31C}', reading: '\u{1F4D6}',
+  sleep_protocol: '\u{1F6CF}\uFE0F', lights_out: '\u{1F634}',
+  sat_social: '\u{1F389}', call_someone: '\u{1F4DE}',
+  review_body: '\u{1F4CB}', review_social: '\u{1F4CB}', review_career: '\u{1F4CB}', review_meta: '\u{1F4CB}',
+  meal_prep_list: '\u{1F6D2}', grocery_run: '\u{1F6D2}', batch_cook: '\u{1F372}',
+  career_review: '\u{1F4BC}', event_planning: '\u{1F4C5}'
+};
+
+const STEP_DURATION = {
+  super_water: 5, super_coffee: 10, morning_sun: 20, afternoon_sun: 25,
+  posture_routine: 12, breakfast: 20, lunch: 20, dinner: 20,
+  work_start: 5, career: 30, skill_practice: 30,
+  workout: 50, myofascial: 18,
+  evening_walk: 20, dating_check: 10, coffee_social: 5,
+  screens_warm: 5, wind_down: 10, reading: 30,
+  sleep_protocol: 10, lights_out: 5,
+  sat_social: 60, call_someone: 20,
+  review_body: 10, review_social: 10, review_career: 10, review_meta: 10,
+  meal_prep_list: 15, grocery_run: 45, batch_cook: 90,
+  career_review: 15, event_planning: 15
+};
+
+function getStepEmoji(id) { return STEP_EMOJI[id] || '\u26A1'; }
+function getStepDuration(id) { return STEP_DURATION[id] || 15; }
+
+function getTimeGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return { greeting: 'Good morning', sub: 'Stack the early wins.' };
+  if (h < 17) return { greeting: 'Afternoon push', sub: 'Stay in the pocket.' };
+  if (h < 21) return { greeting: 'Evening wind-down', sub: 'Close it out strong.' };
+  return { greeting: 'Almost there', sub: 'One step at a time.' };
+}
+
+function getImmersiveCards() {
+  const steps = getSteps();
+  const dateKey = getTodayKey();
+  const dayData = loadDayData(dateKey);
+  const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+  const streaks = calcStreaks();
+
+  let doneCount = 0;
+  const pending = [];
+
+  for (let i = 0; i < steps.length; i++) {
+    const s = steps[i];
+    const state = dayData.states[s.id] || 'pending';
+    if (state === 'done' || state === 'skipped') { if (state === 'done') doneCount++; continue; }
+
+    const sMin = timeToMinutes(s.time);
+    const nextMin = (i + 1 < steps.length) ? timeToMinutes(steps[i + 1].time) : 1440;
+    const isCurrent = nowMin >= sMin && nowMin < nextMin;
+    const isOverdue = nowMin >= nextMin;
+
+    // Check if any streak is at risk for this step
+    let streakAtRisk = false;
+    if (s.streakCat) {
+      const cat = streaks[s.streakCat];
+      if (cat && cat.current > 0) streakAtRisk = true;
+    }
+
+    pending.push({
+      step: s, sMin, isCurrent, isOverdue, streakAtRisk,
+      emoji: getStepEmoji(s.id),
+      duration: getStepDuration(s.id)
+    });
+  }
+
+  if (pending.length === 0) {
+    return { cards: [], done: doneCount, total: steps.length, allDone: true };
+  }
+
+  // Sort: current first, then overdue (most recent first), then upcoming
+  const current = pending.filter(p => p.isCurrent);
+  const overdue = pending.filter(p => p.isOverdue).sort((a, b) => b.sMin - a.sMin);
+  const upcoming = pending.filter(p => !p.isCurrent && !p.isOverdue).sort((a, b) => a.sMin - b.sMin);
+
+  // Build pool of 3
+  const pool = [];
+  // Priority: current step
+  if (current.length) pool.push(current[0]);
+  // Then overdue (streak-at-risk first)
+  const overdueRisk = overdue.filter(o => o.streakAtRisk);
+  const overdueNormal = overdue.filter(o => !o.streakAtRisk);
+  for (const o of [...overdueRisk, ...overdueNormal]) {
+    if (pool.length >= 3) break;
+    pool.push(o);
+  }
+  // Then upcoming
+  for (const u of upcoming) {
+    if (pool.length >= 3) break;
+    pool.push(u);
+  }
+
+  // Mark recommended: first current, then first overdue with streak, then first overdue, then first upcoming
+  let recIdx = 0;
+  if (current.length) {
+    recIdx = pool.indexOf(current[0]);
+  } else if (overdueRisk.length) {
+    recIdx = pool.indexOf(overdueRisk[0]);
+  } else if (overdue.length) {
+    recIdx = pool.indexOf(overdue[0]);
+  }
+
+  const cards = pool.map((p, i) => ({
+    ...p,
+    isRecommended: i === recIdx
+  }));
+
+  // Remaining time estimate
+  const remainingMin = pending.reduce((sum, p) => sum + p.duration, 0);
+
+  return { cards, done: doneCount, total: steps.length, allDone: false, remainingMin };
+}
+
+function renderImmersive() {
+  if (!immersiveActive) return;
+  const result = getImmersiveCards();
+  const tg = getTimeGreeting();
+
+  document.getElementById('immGreeting').textContent = tg.greeting;
+  document.getElementById('immSub').textContent = tg.sub;
+
+  // Progress
+  const pct = result.total > 0 ? Math.round((result.done / result.total) * 100) : 0;
+  document.getElementById('immFill').style.width = pct + '%';
+  document.getElementById('immPct').textContent = result.done + ' of ' + result.total + ' done';
+
+  // Remaining
+  if (result.remainingMin) {
+    const h = Math.floor(result.remainingMin / 60);
+    const m = result.remainingMin % 60;
+    document.getElementById('immRemaining').textContent = '~' + (h ? h + 'h ' : '') + m + 'min left today';
+  } else {
+    document.getElementById('immRemaining').textContent = '';
+  }
+
+  // Streaks (compact, only active ones)
+  const streaks = calcStreaks();
+  let streakHtml = '';
+  for (const [id, s] of Object.entries(streaks)) {
+    if (s.current > 0) {
+      streakHtml += '<span class="imm-streak-item"><span class="imm-streak-fire">\u{1F525}</span>' + s.current + 'd ' + s.label + '</span>';
+    }
+  }
+  document.getElementById('immStreaks').innerHTML = streakHtml;
+
+  // Combo
+  document.getElementById('immCombo').textContent = immCombo >= 2 ? immCombo + '\u00D7 combo' : '';
+
+  // Victory
+  if (result.allDone) {
+    document.getElementById('immCards').style.display = 'none';
+    document.getElementById('immExpanded').style.display = 'none';
+    document.getElementById('immVictory').style.display = '';
+    document.getElementById('immVictory').innerHTML =
+      '<div class="imm-victory-emoji">\u{1F3C6}</div>' +
+      '<div class="imm-victory-text">All operations complete.</div>' +
+      '<div class="imm-victory-stats">' + result.done + ' done today<br>Not a zero day.</div>';
+    return;
+  }
+  document.getElementById('immVictory').style.display = 'none';
+
+  if (immSelectedCard) {
+    renderImmExpanded(immSelectedCard, result);
+  } else {
+    renderImmCards(result.cards);
+  }
+}
+
+function renderImmCards(cards) {
+  document.getElementById('immCards').style.display = '';
+  document.getElementById('immExpanded').style.display = 'none';
+
+  let html = '';
+  for (const c of cards) {
+    let cls = 'imm-card';
+    if (c.isRecommended) cls += ' recommended';
+    if (c.isOverdue) cls += ' overdue';
+
+    let meta = formatTime(c.step.time) + ' \u00B7 ' + c.duration + ' min';
+    let metaExtra = '';
+    if (c.isOverdue) metaExtra += '<span class="overdue-tag">overdue</span>';
+    if (c.streakAtRisk) metaExtra += '<span class="streak-risk">\u{1F525} streak at risk</span>';
+
+    html += '<div class="' + cls + '" onclick="selectImmCard(\'' + c.step.id + '\')">';
+    html += '<div class="imm-card-emoji">' + c.emoji + '</div>';
+    html += '<div class="imm-card-label">' + c.step.short + '</div>';
+    html += '<div class="imm-card-meta">' + meta + metaExtra + '</div>';
+    html += '</div>';
+  }
+  document.getElementById('immCards').innerHTML = html;
+}
+
+function selectImmCard(stepId) {
+  immSelectedCard = stepId;
+  renderImmersive();
+}
+
+function renderImmExpanded(stepId, result) {
+  document.getElementById('immCards').style.display = 'none';
+  document.getElementById('immExpanded').style.display = '';
+
+  const steps = getSteps();
+  const step = steps.find(s => s.id === stepId);
+  if (!step) { immSelectedCard = null; renderImmersive(); return; }
+
+  const dateKey = getTodayKey();
+  const dayData = loadDayData(dateKey);
+  const note = dayData.notes[stepId] || '';
+  const emoji = getStepEmoji(stepId);
+  const dur = getStepDuration(stepId);
+
+  let html = '<div class="imm-expanded-emoji">' + emoji + '</div>';
+  html += '<div class="imm-expanded-label">' + step.short + '</div>';
+  html += '<div class="imm-expanded-time">' + formatTime(step.time) + ' \u00B7 ' + dur + ' min</div>';
+  if (step.long) {
+    html += '<div class="imm-expanded-desc">' + escHtml(step.long) + '</div>';
+  }
+  html += '<input class="imm-expanded-note" type="text" placeholder="Quick note..." value="' + escHtml(note) + '" id="immNote" />';
+  html += '<div class="imm-expanded-actions">';
+  html += '<button class="imm-btn-done" onclick="immComplete(\'' + stepId + '\',\'done\')">Done</button>';
+  html += '<button class="imm-btn-skip" onclick="immComplete(\'' + stepId + '\',\'skipped\')">Skip</button>';
+  html += '</div>';
+  html += '<button class="imm-btn-back" onclick="immBack()">back to cards</button>';
+
+  document.getElementById('immExpanded').innerHTML = html;
+}
+
+function immComplete(stepId, action) {
+  // Save note if any
+  const noteEl = document.getElementById('immNote');
+  if (noteEl && noteEl.value) {
+    const dateKey = getTodayKey();
+    const data = loadDayData(dateKey);
+    data.notes[stepId] = noteEl.value;
+    saveDayData(dateKey, data);
+  }
+
+  // Update state
+  const dateKey = getTodayKey();
+  const data = loadDayData(dateKey);
+  data.states[stepId] = action;
+  saveDayData(dateKey, data);
+
+  // Combo
+  if (action === 'done') {
+    immCombo++;
+  } else {
+    immCombo = 0;
+  }
+
+  immSelectedCard = null;
+
+  if (action === 'done') {
+    // Celebration
+    const cel = document.getElementById('immCelebration');
+    cel.innerHTML = getStepEmoji(stepId) + ' \u2713';
+    cel.style.display = 'flex';
+    cel.style.animation = 'none';
+    cel.offsetHeight; // reflow
+    cel.style.animation = '';
+    setTimeout(() => {
+      cel.style.display = 'none';
+      renderImmersive();
+      renderStreaks();
+    }, 1200);
+  } else {
+    setTimeout(() => {
+      renderImmersive();
+      renderStreaks();
+    }, 300);
+  }
+}
+
+function immBack() {
+  immSelectedCard = null;
+  renderImmersive();
+}
+
+function enterImmersiveMode() {
+  immersiveActive = true;
+  localStorage.setItem('ops_immersive', 'true');
+  applyImmersiveMode();
+}
+
+function exitImmersiveMode() {
+  immersiveActive = false;
+  localStorage.setItem('ops_immersive', 'false');
+  document.body.classList.remove('immersive');
+  document.getElementById('immersiveView').style.display = 'none';
+
+  // Remove exit/bad-day buttons
+  const exitBtn = document.getElementById('immExitBtn');
+  if (exitBtn) exitBtn.remove();
+  const bdBtn = document.getElementById('immBadDayBtn');
+  if (bdBtn) bdBtn.remove();
+
+  // Restore normal UI
+  document.querySelector('h1').style.display = '';
+  document.getElementById('clock').style.display = '';
+  document.getElementById('dayInfo').style.display = '';
+  document.getElementById('phaseBar').style.display = '';
+  document.getElementById('syncBar').style.display = '';
+  document.getElementById('streaks').style.display = '';
+  document.getElementById('navBtns').style.display = '';
+  document.getElementById('lawsBox').style.display = '';
+  document.getElementById('emergencyBtn').style.display = '';
+  if (!syncPassphrase) document.getElementById('syncSetup').style.display = 'block';
+
+  showView('today');
+  renderToday();
+  renderStreaks();
+}
+
+function applyImmersiveMode() {
+  if (!immersiveActive) return;
+
+  document.body.classList.add('immersive');
+
+  // Hide normal UI
+  document.querySelector('h1').style.display = 'none';
+  document.getElementById('clock').style.display = 'none';
+  document.getElementById('dayInfo').style.display = 'none';
+  document.getElementById('phaseBar').style.display = 'none';
+  document.getElementById('syncBar').style.display = 'none';
+  document.getElementById('syncSetup').style.display = 'none';
+  document.getElementById('streaks').style.display = 'none';
+  document.getElementById('navBtns').style.display = 'none';
+  document.getElementById('lawsBox').style.display = 'none';
+  document.getElementById('todayView').style.display = 'none';
+  document.getElementById('historyView').style.display = 'none';
+  document.getElementById('reviewView').style.display = 'none';
+  document.getElementById('emergencyBtn').style.display = 'none';
+  document.getElementById('postureTimer').style.display = 'none';
+
+  document.getElementById('immersiveView').style.display = 'block';
+
+  // Add exit button if not present
+  if (!document.getElementById('immExitBtn')) {
+    const btn = document.createElement('button');
+    btn.id = 'immExitBtn';
+    btn.className = 'imm-exit';
+    btn.textContent = '\u00D7 Exit';
+    btn.onclick = exitImmersiveMode;
+    document.body.appendChild(btn);
+  }
+
+  // Add bad day button if not present
+  if (!document.getElementById('immBadDayBtn')) {
+    const btn = document.createElement('button');
+    btn.id = 'immBadDayBtn';
+    btn.className = 'imm-bad-day';
+    btn.textContent = 'Bad day?';
+    btn.onclick = toggleEmergency;
+    document.body.appendChild(btn);
+  }
+
+  // Update theme color
+  document.querySelector('meta[name="theme-color"]').content = '#0a0a0f';
+
+  renderImmersive();
 }
 
 // ============================================
@@ -932,13 +1390,14 @@ if ('serviceWorker' in navigator) {
 }
 
 // Inline manifest
+const immBg = immersiveActive ? '#0a0a0f' : '#ffffff';
 const manifest = {
   name: "Today's Operations",
   short_name: "OPS",
   start_url: "/",
   display: "standalone",
-  background_color: "#ffffff",
-  theme_color: "#ffffff"
+  background_color: immBg,
+  theme_color: immBg
 };
 const mLink = document.createElement('link');
 mLink.rel = 'manifest';
@@ -962,14 +1421,20 @@ function init() {
     updateSyncBar('Syncing...');
     syncFromServer().then(() => {
       renderStreaks();
-      renderToday();
+      if (immersiveActive) renderImmersive();
+      else renderToday();
     });
+  }
+
+  // Launch immersive mode if active (default)
+  if (immersiveActive) {
+    applyImmersiveMode();
   }
 
   // Auto-update every minute
   setInterval(() => {
-    renderToday();
-    startPostureTimer();
+    if (immersiveActive) { renderImmersive(); }
+    else { renderToday(); startPostureTimer(); }
   }, 60000);
 
   // Refresh streaks every 5 min
